@@ -1,0 +1,74 @@
+# Der Name deiner Pipeline, der in GitHub angezeigt wird
+name: CI/CD Pipeline für Graph-Assistent 🚀
+
+# 1. TRIGGER: Wann soll der Roboter 🤖 starten?
+on:
+  push:
+    branches: [ "main" ]  # Jedes Mal, wenn du auf den "main" Branch hochlädst
+
+# 2. JOBS: Was soll der Roboter tun?
+jobs:
+  # -----------------------------------------------
+  # JOB 1: Der "Tester" 🧪
+  # -----------------------------------------------
+  test:
+    name: 1. Code testen (PyTest)
+    runs-on: ubuntu-latest  # Starte eine frische Linux-Maschine
+
+    steps:
+      # Schritt 1.1: Hole den Code aus deinem Repository
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      # Schritt 1.2: Installiere die richtige Python-Version
+      - name: Python 3.10 einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # Schritt 1.3: Installiere alle "Zutaten" (Bibliotheken)
+      - name: Abhängigkeiten installieren
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      # Schritt 1.4: Führe den PyTest aus
+      # HIER werden die Secrets (Schlüssel) 🔑 sicher übergeben
+      - name: PyTests ausführen
+        run: pytest
+        env:
+          NEO4J_URI: ${{ secrets.NEO4J_URI }}
+          NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+          NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+
+  # -----------------------------------------------
+  # JOB 2: Der "Box-Packer" 📦
+  # -----------------------------------------------
+  build-and-deploy:
+    name: 2. Docker-Box bauen & bereitstellen
+    runs-on: ubuntu-latest
+    needs: test  # WICHTIG: Starte diesen Job NUR, wenn Job 1 (test) erfolgreich war!
+
+    steps:
+      # Schritt 2.1: Hole den Code (erneut nötig für diesen Job)
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      # Schritt 2.2: Anmelden bei der "Docker-Lagerhalle"
+      # (Wir nutzen die GitHub Container Registry, ghcr.io)
+      - name: Bei GitHub Container Registry (ghcr.io) anmelden
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }} # Dein GitHub-Benutzername
+          password: ${{ secrets.GITHUB_TOKEN }} # Ein automatischer Token
+
+      # Schritt 2.3: Baue die Box (anhand Dockerfile) und lade sie hoch (deploy)
+      - name: Docker Image bauen und pushen
+        uses: docker/build-push-action@v5
+        with:
+          context: .  # Wo ist das Dockerfile? Im Hauptordner ('.')
+          file: ./Dockerfile
+          push: true  # 'True' bedeutet: Ja, hochladen (deployen)
+          # Name der Box: z.B. ghcr.io/dein-name/dein-repo:latest
+          tags: ghcr.io/${{ github.repository }}:latest
