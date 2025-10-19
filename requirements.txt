@@ -1,24 +1,24 @@
-# LangChain Core Packages
-langchain==0.3.25
-langchain-core==0.3.58
-langchain-text-splitters==0.3.8
-langchain-community==0.3.12
 
-# LangChain Integrations
+langchain
+langchain-core
+langchain-text-splitters
+langchain-community
+
+
 langchain-groq
-langchain-neo4j==0.5.0
+langchain-neo4j
 
-# Neo4j
-neo4j==5.28.2
-neo4j-graphrag==1.10.0
 
-# Data Processing
-numpy==1.26.4
-pandas==2.3.3
+neo4j
+neo4j-graphrag
 
-# Utilities
-python-dotenv==0.21.0
-pydantic==2.12.2
-pydantic-core==2.41.4
-requests==2.32.2
-typing-extensions==4.15.0
+
+numpy
+pandas
+
+
+python-dotenv
+pydantic
+pydantic-core
+requests
+typing-extensions
