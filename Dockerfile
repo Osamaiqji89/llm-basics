@@ -14,9 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 5. Kopiere jetzt unseren restlichen Code (das "Rezept") in die Box
 COPY GraphAssistent.py .
 
-# 6. Setze die Umgebungsvariable für die GROQ API (kann beim Start überschrieben werden)
-# Verwende beim Docker-Start: docker run -e GROQ_API_KEY=your_key_here ...
-ENV GROQ_API_KEY=""
-
-# 7. Das ist der Befehl, der ausgeführt wird, wenn die Box "gestartet" wird
+# 6. Das ist der Befehl, der ausgeführt wird, wenn die Box "gestartet" wird
 CMD ["python", "GraphAssistent.py"]
