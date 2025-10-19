@@ -1,0 +1,53 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# VSCode
+.vscode/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Environment files
+.env
+*.env
+
+# Database files
+chroma_db/
+*.sqlite3
+*.db
+*.neo4j
+
+# Docker
+*.log
+*.pid
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test & Coverage
+.coverage
+htmlcov/
+*.cover
+*.pyc
+
+# Python virtual environments
+venv/
+.env/
+
+# Git
+.git/
+
+# Neo4j Aura export
+Neo4j-*-Created-*.txt
+
+#pdf
+*.pdf
