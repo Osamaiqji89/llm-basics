@@ -42,33 +42,38 @@ jobs:
           NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
 
   # -----------------------------------------------
-  # JOB 2: Der "Box-Packer" 📦
+  # JOB 2: Der "Box-Packer" 📦 (KORRIGIERT)
   # -----------------------------------------------
   build-and-deploy:
     name: 2. Docker-Box bauen & bereitstellen
     runs-on: ubuntu-latest
-    needs: test  # WICHTIG: Starte diesen Job NUR, wenn Job 1 (test) erfolgreich war!
+    needs: test  # Starte NUR, wenn Job 1 (test) erfolgreich war!
 
     steps:
-      # Schritt 2.1: Hole den Code (erneut nötig für diesen Job)
+      # Schritt 2.1: Code auschecken
       - name: Code auschecken
         uses: actions/checkout@v4
 
-      # Schritt 2.2: Anmelden bei der "Docker-Lagerhalle"
-      # (Wir nutzen die GitHub Container Registry, ghcr.io)
+      # Schritt 2.2: Bei ghcr.io anmelden
       - name: Bei GitHub Container Registry (ghcr.io) anmelden
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }} # Dein GitHub-Benutzername
-          password: ${{ secrets.GITHUB_TOKEN }} # Ein automatischer Token
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Schritt 2.3: Baue die Box (anhand Dockerfile) und lade sie hoch (deploy)
+      # NEUER SCHRITT 2.3: Namen in Kleinbuchstaben umwandeln
+      # Wir wandeln 'Osamaiqji89/llm-basics' in 'osamaiqji89/llm-basics' um
+      - name: Namen in Kleinbuchstaben umwandeln
+        id: lowercase_repo
+        run: echo "repo=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      # Schritt 2.4: Docker Image bauen und pushen
       - name: Docker Image bauen und pushen
         uses: docker/build-push-action@v5
         with:
-          context: .  # Wo ist das Dockerfile? Im Hauptordner ('.')
+          context: .
           file: ./Dockerfile
-          push: true  # 'True' bedeutet: Ja, hochladen (deployen)
-          # Name der Box: z.B. ghcr.io/dein-name/dein-repo:latest
-          tags: ghcr.io/${{ github.repository }}:latest
+          push: true
+          # HIER nutzen wir den neuen Kleinbuchstaben-Namen
+          tags: ghcr.io/${{ steps.lowercase_repo.outputs.repo }}:latest
