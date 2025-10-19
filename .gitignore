@@ -48,6 +48,7 @@ venv/
 
 # Neo4j Aura export
 Neo4j-*-Created-*.txt
+langsmithKey.txt
 
 #pdf
 *.pdf
